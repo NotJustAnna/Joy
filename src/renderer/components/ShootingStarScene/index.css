@@ -1,0 +1,8 @@
+.canvasFullscreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: black;
+  height: 100vh;
+  z-index: -1;
+}
