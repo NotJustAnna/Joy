@@ -7,8 +7,8 @@ type CanvasProps = BuiltInCanvasProps & {
 };
 
 export default function Canvas(props: CanvasProps) {
-  const { draw, ...rest } = props
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const { draw, ...rest } = props;
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current!;
@@ -16,19 +16,23 @@ export default function Canvas(props: CanvasProps) {
     let animationFrameId: number;
 
     const render = () => {
-      if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+      if (
+        canvas.width !== canvas.clientWidth ||
+        canvas.height !== canvas.clientHeight
+      ) {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
       }
       draw(context);
       animationFrameId = window.requestAnimationFrame(render);
-    }
+    };
     render();
 
     return () => {
       window.cancelAnimationFrame(animationFrameId);
-    }
+    };
   }, [draw]);
 
-  return <canvas ref={canvasRef} {...rest}/>;
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  return <canvas ref={canvasRef} {...rest} />;
 }

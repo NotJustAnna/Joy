@@ -16,6 +16,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'no-useless-constructor': 'off',
     'no-empty-function': 'off',
+    'no-plusplus': 'off',
   },
   parserOptions: {
     ecmaVersion: 2022,

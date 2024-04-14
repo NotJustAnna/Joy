@@ -16,7 +16,7 @@ export default function App() {
   }, [eventService]);
 
   return (
-    <div>
+    <>
       <ShootingStarScene paused={false} />
       <EventContext.Provider value={eventService}>
         <TopBar />
@@ -26,6 +26,6 @@ export default function App() {
           </Routes>
         </Router>
       </EventContext.Provider>
-    </div>
+    </>
   );
 }

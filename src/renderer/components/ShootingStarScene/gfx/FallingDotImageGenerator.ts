@@ -15,24 +15,26 @@ export class FallingDotImageGenerator {
     }
 
     const canvas = document.createElement('canvas');
-    let max = speed * size + 1;
+    const max = speed * size + 1;
     canvas.width = max;
     canvas.height = max;
     const ctx = canvas.getContext('2d')!;
     ctx.imageSmoothingEnabled = false;
 
+    let renderColor = color;
     for (let i = 0; i < size * 2; i++) {
-      ctx.fillStyle = color;
-      const at = max - speed * i, sz = size - Math.floor(i / 1.5);
+      ctx.fillStyle = renderColor;
+      const at = max - speed * i;
+      const sz = size - Math.floor(i / 1.5);
       if (sz <= 0) {
         break;
       }
       ctx.fillRect(at, at, sz, sz);
-      color = FallingDotImageGenerator.darkerShade(color);
+      renderColor = FallingDotImageGenerator.darkerShade(color);
     }
 
-    let promise = new Promise<ImageBitmap>((resolve, reject) => {
-      canvas.toBlob(blob => {
+    const promise = new Promise<ImageBitmap>((resolve, reject) => {
+      canvas.toBlob((blob) => {
         if (!blob) {
           reject(new Error('Failed to generate blob'));
           return;
@@ -41,7 +43,9 @@ export class FallingDotImageGenerator {
       });
     });
     this.cache.set(key, promise);
-    this.bottleneck = this.bottleneck ? this.bottleneck.then(async () => await promise && null) : promise.then(() => null);
+    this.bottleneck = this.bottleneck
+      ? this.bottleneck.then(async () => (await promise) && null)
+      : promise.then(() => null);
     return promise;
   }
 
@@ -50,6 +54,8 @@ export class FallingDotImageGenerator {
     const r = Math.floor(parseInt(rgb[1], 16) * 0.9);
     const g = Math.floor(parseInt(rgb[2], 16) * 0.9);
     const b = Math.floor(parseInt(rgb[3], 16) * 0.9);
-    return '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
+    return `#${[r, g, b]
+      .map((v) => Math.round(v).toString(16).padStart(2, '0'))
+      .join('')}`;
   }
 }

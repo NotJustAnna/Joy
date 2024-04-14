@@ -1,7 +1,6 @@
 import { useRef } from 'react';
 import Canvas from './Canvas';
 import { ShootingStarsScene } from './gfx/ShootingStarsScene';
-import './index.css';
 
 export interface ShootingStarSceneProps {
   paused: boolean;
@@ -21,7 +20,7 @@ export default function ShootingStarScene({ paused }: ShootingStarSceneProps) {
   return (
     <Canvas
       draw={(ctx) => sceneRef.current!.loop(ctx)}
-      className="canvasFullscreen"
+      className="absolute top-0 left-0 bg-black h-screen z-[-1]"
     />
   );
 }

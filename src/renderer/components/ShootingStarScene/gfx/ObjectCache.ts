@@ -1,10 +1,13 @@
 export class ObjectCache<T> {
   constructor(private readonly ttl: number) {}
 
-  private readonly cache = new Map<string, {
-    lastAccess: number;
-    value: T;
-  }>();
+  private readonly cache = new Map<
+    string,
+    {
+      lastAccess: number;
+      value: T;
+    }
+  >();
 
   has(key: string) {
     const entry = this.cache.get(key);

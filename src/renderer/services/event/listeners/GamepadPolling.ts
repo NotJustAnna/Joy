@@ -22,6 +22,8 @@ export class GamepadPolling extends InitLifecycle {
   }
 
   private poll() {
+    if (!document.hasFocus()) return;
+
     navigator.getGamepads().forEach((gamepad, index) => {
       if (!gamepad || !gamepad.connected) return;
 
