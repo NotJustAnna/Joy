@@ -1,4 +1,7 @@
 {
+  "name": "joy",
+  "version": "0.1.0",
+  "license": "MIT",
   "main": "./src/main/main.ts",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
@@ -147,8 +150,8 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "Joy",
+    "appId": "net.notjustanna.Joy",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -203,12 +206,7 @@
     },
     "extraResources": [
       "./assets/**"
-    ],
-    "publish": {
-      "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
-    }
+    ]
   },
   "devEngines": {
     "node": ">=14.x",

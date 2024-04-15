@@ -12,6 +12,8 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { readFile } from 'fs/promises';
+import { spawn } from 'child_process';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
@@ -25,10 +27,20 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+ipcMain.on('config', (event) => {
+  // eslint-disable-next-line promise/catch-or-return
+  readFile(path.join(app.getAppPath(), 'config.json'), 'utf-8')
+    .catch(() => {
+      return '{"items": [], "showDisplayOption": false}';
+    })
+    .then((data) => event.reply('config', data));
+});
+
+ipcMain.on('command', (_event, command) => {
+  spawn(command, [], {
+    shell: true,
+    stdio: 'ignore',
+  });
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -40,7 +52,7 @@ const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
-  require('electron-debug')();
+  require('electron-debug')({ showDevTools: false });
 }
 
 const installExtensions = async () => {
@@ -61,15 +73,8 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
-
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
-
   mainWindow = new BrowserWindow({
+    backgroundColor: '#000',
     frame: false,
     show: false,
     webPreferences: {
@@ -80,8 +85,6 @@ const createWindow = async () => {
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
-
-  mainWindow.setIgnoreMouseEvents(false);
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {

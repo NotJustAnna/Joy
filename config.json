@@ -1,0 +1,33 @@
+{
+  "showDesktopOption": true,
+  "items": [
+    {
+      "id": "retroArch",
+      "title": "RetroArch",
+      "icon": "fontawesome/gamepad",
+      "actionType": "command",
+      "action": "D:\\Dolphin-x64\\Dolphin.exe"
+    },
+    {
+      "id": "kodi",
+      "title": "Kodi",
+      "icon": "fontawesome/television",
+      "actionType": "command",
+      "action": "C:\\path\\to\\kodi.exe"
+    },
+    {
+      "id": "steam",
+      "title": "Big Picture",
+      "icon": "fontawesome/steam",
+      "actionType": "url",
+      "action": "steam://open/bigpicture"
+    },
+    {
+      "id": "system",
+      "title": "System",
+      "icon": "fontawesome/power-off",
+      "actionType": "internal",
+      "action": "system"
+    }
+  ]
+}

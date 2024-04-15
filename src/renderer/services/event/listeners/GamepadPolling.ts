@@ -7,6 +7,8 @@ import { Repeater } from '../utils/Repeater';
 export class GamepadPolling extends InitLifecycle {
   private readonly repeater = new Repeater(400, 100, this.emit.bind(this));
 
+  private readonly timestamps = new Map<number, number>();
+
   constructor(private readonly target: EventTarget) {
     super();
   }
@@ -26,6 +28,14 @@ export class GamepadPolling extends InitLifecycle {
 
     navigator.getGamepads().forEach((gamepad, index) => {
       if (!gamepad || !gamepad.connected) return;
+
+      if (!this.timestamps.has(index)) {
+        this.timestamps.set(index, gamepad.timestamp);
+      } else if (this.timestamps.get(index) === gamepad.timestamp) {
+        return;
+      } else {
+        this.timestamps.set(index, gamepad.timestamp);
+      }
 
       gamepad.buttons.forEach((button, buttonIndex) => {
         if (!(buttonIndex in GamepadPolling.BUTTON_MAP)) return;
