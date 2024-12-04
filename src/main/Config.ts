@@ -1,3 +1,5 @@
+import type { Position } from '../renderer/components/InfoBar';
+
 export interface Item {
   id: string;
   icon: string;
@@ -10,4 +12,5 @@ export interface Item {
 export interface Config {
   items: Item[];
   showDesktopOption?: boolean;
+  infoBarPosition?: Position;
 }

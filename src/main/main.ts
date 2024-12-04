@@ -12,7 +12,7 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { readFile } from 'fs/promises';
+import { readFile, writeFile } from 'fs/promises';
 import { spawn } from 'child_process';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
@@ -27,11 +27,32 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
+const isDevEnv = process.env.NODE_ENV === 'development';
+
+const sampleConfig = `{
+  "showDisplayOption": false,
+  "infoBarPosition": "top-right",
+  "items": [
+    {
+      "id": "system",
+      "title": "System",
+      "icon": "fontawesome/power-off",
+      "actionType": "internal",
+      "action": "system"
+    }
+  ]
+}`;
+
 ipcMain.on('config', (event) => {
+  const file = path.join(
+    isDevEnv ? app.getAppPath() : app.getPath('userData'),
+    'Joy-cfg.json',
+  );
   // eslint-disable-next-line promise/catch-or-return
-  readFile(path.join(app.getAppPath(), 'config.json'), 'utf-8')
+  readFile(file, 'utf-8')
     .catch(() => {
-      return '{"items": [], "showDisplayOption": false}';
+      writeFile(file, sampleConfig, 'utf-8');
+      return sampleConfig;
     })
     .then((data) => event.reply('config', data));
 });
@@ -43,13 +64,26 @@ ipcMain.on('command', (_event, command) => {
   });
 });
 
+ipcMain.on('shutdown', () => {
+  spawn('shutdown /s /t 0', {
+    shell: true,
+    stdio: 'ignore',
+  });
+});
+
+ipcMain.on('reboot', () => {
+  spawn('shutdown /r /t 0', {
+    shell: true,
+    stdio: 'ignore',
+  });
+});
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
 
-const isDebug =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const isDebug = isDevEnv || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
   require('electron-debug')({ showDevTools: false });

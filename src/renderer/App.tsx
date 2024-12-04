@@ -10,6 +10,8 @@ import { EventContext } from './services/event/context';
 import System from './pages/System';
 import Shutdown from './pages/System/Shutdown';
 import Reboot from './pages/System/Reboot';
+import { MouseService } from './services/mouse';
+import { useConfig } from './utils/config/context';
 
 export default function App() {
   const [eventService] = useState(() => new EventService());
@@ -18,11 +20,21 @@ export default function App() {
     return () => eventService.destroy();
   }, [eventService]);
 
+  const [mouseService] = useState(
+    () => new MouseService(MouseService.emitEvent(eventService.target)),
+  );
+  useEffect(() => {
+    mouseService.init();
+    return () => mouseService.destroy();
+  }, [mouseService]);
+
+  const config = useConfig();
+
   return (
     <>
       <ShootingStarScene paused={false} />
       <EventContext.Provider value={eventService}>
-        <InfoBar position={Position.BottomRight} />
+        <InfoBar position={config.infoBarPosition ?? Position.TopRight} />
         <Router>
           <Routes>
             <Route path="/" element={<Main />} />

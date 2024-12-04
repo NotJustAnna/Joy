@@ -9,6 +9,7 @@ import { useEvents } from '../../services/event/context';
 import { useEvent } from '../../utils/useEvent';
 import { isInputEvent } from '../../services/event/details/InputDetail';
 import { isGamepadEvent } from '../../services/event/details/GamepadDetail';
+import { isMouseVisibleEvent } from '../../services/event/details/MouseVisibleDetail';
 
 export default function Time() {
   const events = useEvents();
@@ -31,8 +32,14 @@ export default function Time() {
     }
   });
 
-  useEvent(document, 'mousemove', () => {
-    setInputType('mouse');
+  useEvent(events, 'mouse-visible', (event) => {
+    if (!isMouseVisibleEvent(event)) return;
+    const { visible } = event.detail;
+    if (visible) {
+      setInputType('mouse');
+    } else if (inputType === 'mouse') {
+      setInputType('none');
+    }
   });
 
   if (inputType === 'keyboard') {

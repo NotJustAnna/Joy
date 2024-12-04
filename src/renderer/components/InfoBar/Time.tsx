@@ -10,14 +10,15 @@ export default function Time() {
     nextMinute.setMinutes(nextMinute.getMinutes() + 1);
     const delay = nextMinute.getTime() - new Date().getTime();
 
-    const interval = setInterval(() => {
+    const timeout = setTimeout(() => {
       setTime(new Date());
     }, delay);
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearTimeout(timeout);
+  }, [time]);
 
-  const timeStr = time.toLocaleTimeString().substring(0, 5);
+  const hours = time.getHours().toString().padStart(2, '0');
+  const minutes = time.getMinutes().toString().padStart(2, '0');
 
-  return <span>{timeStr}</span>;
+  return `${hours}:${minutes}`;
 }
